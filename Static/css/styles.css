@@ -183,6 +183,12 @@ body {
     left: 970px;
 }
 
+.edwdg-img {
+    position: absolute;
+    top: 500px;
+    left: 270px;
+}
+
 #cancelPosition {
     padding: 10px 24px;
     background-color: #eee;
