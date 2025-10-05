@@ -61,6 +61,23 @@ body {
     font-size: 15px;
     width: 15%;
     height: 60px;
+
+    display: inline-block;
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+}
+
+.transferButton:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.transferButton:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25) inset;
 }
 
 #submitButton {
@@ -68,6 +85,22 @@ body {
     height: 60px;
     border-radius: 6px;
     font-size: 20px;
+
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+}
+
+#submitButton:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+#submitButton:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25) inset;
 }
 
 .codePosition {
@@ -142,4 +175,22 @@ body {
     border: 2px solid black;
     border-radius: 6px;
     font-size: 15px;
+}
+
+.btn,
+.form-control {
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) inset;
 }
