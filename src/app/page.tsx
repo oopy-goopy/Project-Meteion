@@ -9,7 +9,7 @@ export default function Home() {
 
   const create = async ()=>{
     try {
-      const response = await fetch('http://localhost:3001/api/createRoom', {
+      const response = await fetch('/api/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

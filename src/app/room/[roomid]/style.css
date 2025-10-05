@@ -1,8 +1,4 @@
 /* Base styles */
-.container {
-  font-family: system-ui, -apple-system, sans-serif;
-}
-
 .header {
   text-align: center;
   margin: 8px 0 0 0;
@@ -158,15 +154,6 @@
 .headerButtons {
   display: flex;
   gap: 8px;
-}
-
-.copyButton {
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  transition: background 0.2s;
 }
 
 .copyButton:hover {

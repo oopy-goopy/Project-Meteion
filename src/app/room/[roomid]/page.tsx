@@ -1,66 +1,110 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-import Link from 'next/link'
+import Link from 'next/link';
+import DrawCanvas from '@/components/drawingPad';
 import './style.css'
+import { getMessage, getMessages } from '@/dtos/room.dtos';
 
-export default function Room(){
+export default function Room() {
     const params = useParams<{ roomid: string }>();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
     const [messages, setMessages] = useState<Array<{role: string, text: string, time: string}>>([]);
     const [currentMessage, setCurrentMessage] = useState('Messages will appear here');
+    const [wordArray, setWordArray] = useState<string[]>([]);
+    const lastMessageRef = useRef<getMessage | null>(null);
 
     useEffect(() => {
         async function validateRoom() {
-        try {
-            const response = await fetch(`http://localhost:3001/api/rooms/${params.roomid}`);
-            
-            if (!response.ok) {
-            setError('Room not found');
-            setTimeout(() => router.push('/'), 3000);
+            try {
+                const response = await fetch(`/api/rooms/${params.roomid}`);
+                
+                if (!response.ok) {
+                    setError('Room not found');
+                    setTimeout(() => router.push('/'), 3000);
+                } else {
+                    addLog('SUCCESS', `Connected to room ${params.roomid}`);
+                }
+            } catch (err) {
+                setError('Failed to connect to server');
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            setError('Failed to connect to server');
-        } finally {
-            setLoading(false);
-        }
         }
 
         validateRoom();
     }, [params.roomid, router]);
+
+    useEffect(()=>{
+        const messages = async () =>{
+            try{
+                const response = await fetch(`/api/rooms/${params.roomid}`);
+                if (response.ok) {
+                    const data : getMessages = await response.json();
+
+                    const newMessage : getMessage | undefined = data.messages.at(-1);
+
+                    if (newMessage != undefined && (newMessage.user != lastMessageRef.current?.user || newMessage.text != lastMessageRef.current?.text)) {
+                        lastMessageRef.current = newMessage;
+                        addLog(newMessage.user, newMessage.text);
+                    }
+                }
+            }catch (err) {
+                console.error('Failed to get messages:', err);
+            }
+        }
+
+        messages();
+
+        const intervalID = setInterval(messages, 5000);
+
+        return ()=> clearInterval(intervalID);
+    }, [params.roomid]);
 
     const addLog = (role: string, text: string) => {
         const time = new Date().toLocaleTimeString();
         setMessages(prev => [...prev, { role, text, time }]);
     };
 
-    const copyLogs = async () => {
-        const lines = messages.map(m => `[${m.time}] ${m.role}: ${m.text}`);
-        const txt = lines.join('\n');
-        
-        try {
-            await navigator.clipboard.writeText(txt);
-            alert('Copied to clipboard!');
-        } catch (e) {
-            const ta = document.createElement('textarea');
-            ta.value = txt;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            ta.remove();
-            alert('Copied to clipboard!');
-        }
+    const handleDrawingSuccess = (recognizedWord: string) => {
+        setCurrentMessage(recognizedWord);
+        setWordArray(prev => [...prev, recognizedWord]);
     };
 
     const handleMessageClick = (text: string) => {
         setCurrentMessage(text);
     };
 
-    if (loading) return <div>Validating room...</div>;
-    if (error) return <div>Error: {error}</div>;
+    const onSubmit = async()=>{
+        if(wordArray.length != 0){
+            try{
+                const response = await fetch('/api/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        room: params.roomid,
+                        arr: wordArray,
+                        lang: 'english',
+                        user: 'wostin'
+                    }),
+                });
+                if (response.ok) {
+                    setWordArray([]); // Clear the array after successful submission
+                } else {
+                    addLog('ERROR', 'Failed to submit words');
+                }
+            } catch (err) {
+                addLog('ERROR', 'Network error: Failed to send request');
+            }
+        }
+    }
+
+    if (loading) return <div className="container"><div style={{padding: '20px', textAlign: 'center'}}>Validating room...</div></div>;
+    if (error) return <div className="container"><div style={{padding: '20px', textAlign: 'center', color: '#dc2626'}}>Error: {error}</div></div>;
 
     return (
         <div className="container">
@@ -71,41 +115,13 @@ export default function Room(){
             <div className="pageContainer">
                 {/* LEFT COLUMN */}
                 <div className="leftCol">
-                    {/* CANVAS/DRAWING AREA */}
+                    <div className="codeSection">
+                        <p>Words collected: {wordArray.join(', ') || 'None yet'}</p>
+                    </div>
+
+                    {/* CANVAS AREA */}
                     <div className="canvasArea">
-                        <div className="controls">
-                            <div className="controlsTitle">Controls</div>
-                            
-                            <div className="buttonGroup">
-                                <button 
-                                    className="button"
-                                    onClick={() => addLog('INFO', 'Button clicked at ' + new Date().toLocaleTimeString())}
-                                >
-                                    Test Button
-                                </button>
-                                <button 
-                                    className="button"
-                                    onClick={() => addLog('SUCCESS', 'Action completed successfully')}
-                                >
-                                    Success Test
-                                </button>
-                                <button 
-                                    className="button"
-                                    onClick={() => addLog('ERROR', 'Something went wrong')}
-                                >
-                                    Error Test
-                                </button>
-                            </div>
-
-                            <small className="hint">Click buttons to test message logging functionality.</small>
-                        </div>
-
-                        <div className="canvasPlaceholder">
-                            <div className="placeholderContent">
-                                <p className="placeholderTitle">Canvas Area</p>
-                                <p className="placeholderText">Your drawing canvas component will go here</p>
-                            </div>
-                        </div>
+                        <DrawCanvas onSuccess={handleDrawingSuccess} onError={addLog} onSubmit={()=>{onSubmit()}}/>
                     </div>
 
                     <div className="bottomRow">
@@ -121,18 +137,13 @@ export default function Room(){
                 <aside className="messagesSidebar">
                     <div className="messagesHeader">
                         <div className="messagesTitle">Messages</div>
-                        <div className="headerButtons">
-                            <button className="copyButton" onClick={copyLogs} title="Copy log">
-                                Copy
-                            </button>
-                        </div>
                     </div>
 
                     {/* Message Display Area */}
                     <div className="messageDisplay">
                         {messages.length === 0 ? (
                             <div className="emptyState">
-                                No messages yet. Click the test buttons to see messages appear here.
+                                No messages yet. Start drawing to see recognition results.
                             </div>
                         ) : (
                             messages.map((msg, i) => (
@@ -157,36 +168,8 @@ export default function Room(){
                             ))
                         )}
                     </div>
-
-                    {/* Read-only message input area */}
-                    <div className="readonlySection">
-                        <div 
-                            className="readonlyBox"
-                            role="textbox"
-                            aria-readonly="true"
-                            tabIndex={0}
-                            title="This is a read-only message box"
-                        >
-                            <div className={`readonlyText ${
-                                currentMessage === 'Messages will appear here' ? 'readonlyTextEmpty' : 'readonlyTextFilled'
-                            }`}>
-                                {currentMessage}
-                            </div>
-                            <button 
-                                className="clearButton"
-                                onClick={() => setCurrentMessage('Messages will appear here')}
-                                title="Clear current"
-                            >
-                                Clear
-                            </button>
-                        </div>
-                        <div className="readonlyHint">
-                            Read-only — cannot type here
-                        </div>
-                    </div>
                 </aside>
             </div>
         </div>
     );
-
 }
