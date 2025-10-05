@@ -160,21 +160,27 @@ body {
 }
 
 .stormP1-img {
-    position: relative;
-    top: 70px;
-    left: 390px;
+    position: absolute;
+    top: -24px;
+    left: 1000px;
 }
 
 .orang-img {
-    position: relative;
-    top: 381px;
-    left: 413px;
+    position: absolute;
+    top: 529px;
+    left: 1135px;
+}
+
+.dawg-img {
+    position: absolute;
+    top: 400px;
+    left: 50px;
 }
 
 .gym-img {
-    position: relative;
-    top: 248px;
-    left: 370px;
+    position: absolute;
+    top: 500px;
+    left: 970px;
 }
 
 #cancelPosition {
