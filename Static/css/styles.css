@@ -189,6 +189,14 @@ body {
         transform 0.1s ease;
 }
 
+#nameControl {
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+    width: 300px;
+}
+
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
@@ -197,4 +205,10 @@ body {
 .btn:active {
     transform: translateY(0);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) inset;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
