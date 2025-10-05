@@ -103,6 +103,7 @@ export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasP
         if (!canvas || isProcessing) return;
 
         setIsProcessing(true);
+        console.log(isProcessing);
 
         try {
             const dataUrl = canvas.toDataURL('image/png');
