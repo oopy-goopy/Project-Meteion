@@ -52,13 +52,15 @@ body {
 }
 
 .transferButton {
-    padding: 10px 24px;
+    padding: 20px 80px;
     background-color: #eee;
     color: black;
     text-decoration: none;
     border: 2px solid black;
     border-radius: 6px;
     font-size: 15px;
+    width: 15%;
+    height: 60px;
 }
 
 #submitButton {
@@ -123,4 +125,10 @@ body {
 .buttonGroup {
     display: flex;
     gap: 20px;
+}
+
+.meteion-img {
+    position: relative;
+    top: 70px;
+    left: 390px;
 }
