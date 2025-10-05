@@ -7,8 +7,6 @@
   <title>Meteion — Drawing + Chat</title>
 
   <style>
-    /* Page layout */
-  
     .biggerText {
       text-align: center;
       font-size: 28px;
@@ -26,15 +24,15 @@
       min-height: 100vh;
     }
 
-    /* Left column: main content (takes remaining width) */
+    /* Left column */
     .leftCol {
       flex: 1 1 auto;
       min-width: 300px;
     }
 
-    /* Right column: chat log (fixed width) */
+    /* Right column */
     .rightCol {
-      width: 320px;            /* adjust as desired */
+      width: 320px;
       max-width: 40vw;
       display: flex;
       flex-direction: column;
@@ -43,7 +41,7 @@
       border-radius: 8px;
       padding: 12px;
       background: #fff;
-      height: calc(100vh - 36px); /* keep it full-height minus page padding */
+      height: calc(100vh - 100px);
     }
 
     /* Chat messages list scroll area */
@@ -103,11 +101,11 @@
       box-sizing: border-box;
     }
 
-    /* responsive canvas: fill container width and keep aspect ratio (3:2) */
+    /* responsive canvas */
     canvas#draw {
       display: block;
       width: 100%;
-      aspect-ratio: 3 / 2;   /* 720x480 = 3:2 */
+      aspect-ratio: 3 / 2;
       touch-action: none;
       border-radius: 4px;
     }
@@ -161,7 +159,7 @@
         </div>
 
         <div class="canvasWrap" role="region" aria-label="Canvas wrapper">
-          <!-- responsive canvas (aspect-ratio keeps it from collapsing) -->
+          <!-- responsive canvas (aspect-ratio prevents collapsing) -->
           <canvas id="draw" width="720" height="480"></canvas>
         </div>
       </div>
@@ -174,7 +172,6 @@
       </div>
     </div>
 
-<!-- REPLACE rightCol aside with this -->
 <aside class="rightCol" aria-label="Message display">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <div style="font-weight:600">Messages</div>
@@ -186,7 +183,6 @@
   <!-- display-only message log -->
   <div id="messageDisplay" class="chatMessages" role="log" aria-live="polite" aria-atomic="false"></div>
 
-  <!-- "fake" input at bottom that looks like a chat input but is read-only -->
   <div style="margin-top:8px;">
     <label for="fakeInput" style="display:none;">Read-only message box</label>
     <div id="fakeInput"
@@ -209,8 +205,7 @@
            outline: none;
          ">
       <div id="fakeInputText" style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#6b7280;">
-        <!-- current message text appears here -->
-        Read-only — messages will appear here when selected or when new logs arrive.
+        Messages will appear here
       </div>
       <button id="copyCurrentBtn" title="Copy current" style="padding:6px 10px; border-radius:6px;">Copy</button>
     </div>
@@ -219,9 +214,6 @@
 </aside>
 
 
-
-
-  <!-- KEEP your drawing script; it already reads computed canvas size so it's responsive -->
   <script>
     (function () {
       const canvas = document.getElementById('draw');
@@ -233,7 +225,7 @@
       const downloadWhiteBtn = document.getElementById('downloadWhiteBtn');
       const undoBtn = document.getElementById('undoBtn');
 
-      // Undo stack (stores dataURLs) — capped to avoid memory bloat
+      // Undo stack (stores dataURLs)
       const undoStack = [];
       const MAX_UNDO = 12;
 
@@ -301,8 +293,6 @@
           y: (clientY - rect.top) * (scaleY / dpr)
         };
       }
-
-
 
       function pushState() {
         try {
@@ -412,7 +402,7 @@
       downloadWhiteBtn.addEventListener('click', () => download(true));
       pushState();
 
-            // --- Read-only message display API (safe & self-contained) ---
+      // --- Read-only message display API (safe & self-contained) ---
       (function () {
         const messageDisplay = document.getElementById('messageDisplay');
         const copyLogsBtn = document.getElementById('copyLogsBtn');
@@ -510,10 +500,8 @@
           }
         }
 
-        // Wire buttons only if they exist (defensive)
         if (copyLogsBtn) copyLogsBtn.addEventListener('click', copyLogs);
 
-        // Expose a small API for other scripts (drawing code) to call
         window.logDisplay = { addLog, setLogs, copyLogs };
       })();
 
