@@ -1,0 +1,81 @@
+.signInLabel {
+    font-size: 18px;
+}
+
+
+.bigText {
+    font-weight: bold;
+    font-size: 32px;
+}
+
+#codeLabel {
+    margin-top: 30px;
+}
+
+.formRow {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-top: 20px;
+    margin-left: 390px;
+}
+
+body {
+    text-align: center;
+}
+
+#blackRoundBox {
+    background: #fff;
+    width: 80px;
+    height: 20px;
+    border: 8px solid black;
+    margin-left: 50px;
+    border-radius: 20px;
+}
+
+.bodySet {
+    font-family: sans-serif;
+    height: 95vh;
+    margin-left: 170px;
+    margin-top: 300px
+}
+
+.buttonRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.transferButton {
+    padding: 10px 24px;
+    background-color: #eee;
+    color: black;
+    text-decoration: none;
+    border: 2px solid black;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+#submitButton {
+    width: 15%;
+    height: 60px;
+    border-radius: 6px;
+}
+
+#nextPosition {
+    margin-top: 800px;
+    margin-left: -1000px;
+}
+
+#codePosition {
+    margin-top: 2000px;
+    margin-left: -1000px;
+}
+
+#messagePosition {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+}
