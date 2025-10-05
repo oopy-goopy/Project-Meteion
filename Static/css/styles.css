@@ -2,10 +2,14 @@
     font-size: 18px;
 }
 
-
 .bigText {
     font-weight: bold;
     font-size: 32px;
+}
+
+.biggerText {
+    font-weight: bold;
+    font-size: 40px;
 }
 
 #codeLabel {
@@ -35,9 +39,8 @@ body {
 
 .bodySet {
     font-family: sans-serif;
-    height: 95vh;
-    margin-left: 170px;
-    margin-top: 300px
+    margin: 0;
+    padding: 0;
 }
 
 .buttonRow {
@@ -64,20 +67,28 @@ body {
     border-radius: 6px;
 }
 
-#nextPosition {
-    margin-top: 800px;
-    margin-left: -1000px;
+.codePosition {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    font-size: 28px;
 }
 
-#codePosition {
-    margin-top: 2000px;
-    margin-left: -1000px;
+.messagePosition {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: lightgrey;
+    padding: 25px 40px;
+    border-radius: 10px;
+    font-size: 26px;
+    font-weight: 500;
 }
 
-#messagePosition {
+#lowerMessage {
     display: flex;
     flex-direction: row;
-    justify-content: right;
+    justify-content: end;
 }
 
 #board {
@@ -87,4 +98,29 @@ body {
     touch-action: none;
     width: 900px;
     height: 500px;
+}
+
+.bottomRow {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    right: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.nextButton {
+    padding: 20px 50px;
+    background-color: #f2f1f1;
+    color: black;
+    text-decoration: none;
+    border: 2px solid #000;
+    border-radius: 8px;
+    font-size: 28px;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 20px;
 }
