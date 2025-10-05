@@ -1,3 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+
+*{
+  font-family: "Comic Neue", cursive;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    text-align: center;
+}
+
 .signInLabel {
     font-size: 18px;
 }
@@ -28,21 +42,6 @@ body {
     text-align: center;
 }
 
-#blackRoundBox {
-    background: #fff;
-    width: 80px;
-    height: 20px;
-    border: 8px solid black;
-    margin-left: 50px;
-    border-radius: 20px;
-}
-
-.bodySet {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
 .buttonRow {
     display: flex;
     justify-content: center;
@@ -70,7 +69,6 @@ body {
 }
 
 .transferButton:hover {
-    background-color: #f9f9f9;
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
@@ -93,7 +91,6 @@ body {
 }
 
 #submitButton:hover {
-    background-color: #f9f9f9;
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
@@ -127,15 +124,6 @@ body {
     justify-content: end;
 }
 
-#board {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    touch-action: none;
-    width: 900px;
-    height: 500px;
-}
-
 .bottomRow {
     position: absolute;
     bottom: 25px;
@@ -161,10 +149,34 @@ body {
     gap: 20px;
 }
 
-.meteion-img {
-    position: relative;
-    top: 70px;
-    left: 390px;
+.stormP1-img {
+    position: absolute;
+    top: -24px;
+    left: 1000px;
+}
+
+.orang-img {
+    position: absolute;
+    top: 529px;
+    left: 1135px;
+}
+
+.dawg-img {
+    position: absolute;
+    top: 400px;
+    left: 50px;
+}
+
+.gym-img {
+    position: absolute;
+    top: 500px;
+    left: 970px;
+}
+
+.edwdg-img {
+    position: absolute;
+    top: 500px;
+    left: 270px;
 }
 
 #cancelPosition {
@@ -185,6 +197,14 @@ body {
         transform 0.1s ease;
 }
 
+#nameControl {
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+    width: 300px;
+}
+
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
@@ -193,4 +213,153 @@ body {
 .btn:active {
     transform: translateY(0);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) inset;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* ======Tablet======*/
+
+@media (max-width: 992px) {
+    .bigText {
+        font-size: 28px;
+    }
+
+    .biggerText {
+        font-size: 34px;
+    }
+
+    .formRow {
+        margin-left: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    #nameControl {
+        width: 80%;
+        max-width: 420px;
+    }
+
+    .buttonRow,
+    .button-row {
+        gap: 24px;
+    }
+
+    #board {
+        width: min(92vw, 900px);
+        height: min(50vh, 500px);
+    }
+
+    .bottomRow {
+        left: 2vw;
+        right: 2vw;
+        bottom: 2vw;
+    }
+
+    .stormP1-img,
+    .orang-img,
+    .edwdg-img,
+    .gym-img,
+    .dawg-img {
+        position: static;
+        width: clamp(220px, 30vw, 304px);
+        height: auto;
+        margin: 8px;
+    }
+
+    .jumbotron {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .jumbotron img {
+        display: inline-block;
+    }
+}
+
+
+/* =====Mobile=====*/
+
+@media (max-width: 768px) {
+
+    .bigText {
+        font-size: 24px;
+    }
+
+    .biggerText {
+        font-size: 28px;
+    }
+
+    #nameControl {
+        width: 92%;
+        max-width: 28rem;
+        font-size: 16px;
+    }
+
+    .buttonRow,
+    .button-row {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .transferButton,
+    #submitButton,
+    .submitButton {
+        width: 92%;
+        max-width: 22rem;
+        padding: 16px 24px;
+        height: auto;
+        font-size: 18px;
+    }
+
+    .codePosition {
+        top: 3vw;
+        left: 3vw;
+        font-size: 20px;
+    }
+
+    .messagePosition {
+        padding: 14px 20px;
+        font-size: 18px;
+    }
+
+    #board {
+        width: 94vw;
+        height: 44vh;
+    }
+}
+
+
+/* ===== Small Mobile ====== */
+@media (max-width: 480px) {
+    html {
+        font-size: 15px;
+    }
+
+    .transferButton,
+    #submitButton,
+    .submitButton {
+        width: 96%;
+        max-width: 20rem;
+        font-size: 16px;
+        padding: 14px 18px;
+    }
+
+    #nameControl {
+        width: 96%;
+        max-width: 22rem;
+    }
+
+    .stormP1-img,
+    .orang-img,
+    .edwdg-img,
+    .gym-img,
+    .dawg-img {
+        width: clamp(160px, 42vw, 240px);
+    }
 }

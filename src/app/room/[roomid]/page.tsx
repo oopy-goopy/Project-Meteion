@@ -5,6 +5,7 @@ import Link from 'next/link';
 import DrawCanvas from '@/components/drawingPad';
 import './style.css'
 import { getMessage, getMessages } from '@/dtos/room.dtos';
+import { useGlobalStore } from '@/function/global';
 
 export default function Room() {
     const params = useParams<{ roomid: string }>();
@@ -15,6 +16,8 @@ export default function Room() {
     const [currentMessage, setCurrentMessage] = useState('Messages will appear here');
     const [wordArray, setWordArray] = useState<string[]>([]);
     const lastMessageRef = useRef<getMessage | null>(null);
+
+      const {_user} = useGlobalStore();
 
     useEffect(() => {
         async function validateRoom() {
@@ -89,7 +92,7 @@ export default function Room() {
                         room: params.roomid,
                         arr: wordArray,
                         lang: 'english',
-                        user: 'wostin'
+                        user: `${_user}`
                     }),
                 });
                 if (response.ok) {

@@ -3,11 +3,23 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { createRoom } from '@/dtos/room.dtos';
+import { useState } from 'react';
+import { useGlobalStore } from '@/function/global';
 
 export default function Home() {
+  const {_user, setUser} = useGlobalStore();
+
   const router = useRouter();
+  const [userName, _setUser] = useState('');
+  const changeFunc = (e: React.ChangeEvent<HTMLInputElement>)=>{
+    _setUser(e.target.value);
+  }
+  const changeUsername = (u : string)=>{
+    setUser(u);
+  }
 
   const create = async ()=>{
+    changeUsername(userName);
     try {
       const response = await fetch('/api/create', {
         method: 'POST',
@@ -33,22 +45,33 @@ export default function Home() {
     }
   }
   const join = ()=>{
+    changeUsername(userName);
     router.push('/join');
   }
 
   return(
-    <div className='bodySet'>
+    <>
       <div className="jumbotron text-center">
         <div>
-            <h1 className="animate__animated animate__fadeInDown">Meteion</h1>
+          <h1 
+            className="animate__animated animate__fadeInDown" 
+          >
+            Project: Meteion
+          </h1>
         </div>
-        <Image src="/stormP1.png" className="img-rounded meteion-img" alt="Cinque Terre" width="304" height="236"/>
+        <Image src="/stormP1.png" className="img-rounded stormP1-img" alt="Cinque Terre" width="304" height="236"/>
+        <Image src="/orang.png" className="img-rounded orang-img" alt="Cinque Terre" width="304" height="236"/>
+        <Image src="/edwdg.png" className="img-rounded edwdg-img" alt="Cinque Terre" width="304" height="236"/>
       </div>
 
-      <div className='middleButton'>
-        <button id="submitButton" onClick={create}>create</button>
-        <button className="transferButton" onClick={join}>join</button>
+      <div className="form-group">
+        <label>Enter Name: </label>
+        <input type="text" id="nameControl" placeholder="ex: Alice" onChange={changeFunc}/>
       </div>
-    </div>
+      <div className="button-row">
+        <input type="submit" id="submitButton" name="CREATE LOBY" value="CREATE LOBBY" onClick={create}/>
+        <input type="submit" id="submitButton" name="JOIN LOBY" value="JOIN LOBBY" onClick={join}/>
+      </div>
+    </>
   );
 }
