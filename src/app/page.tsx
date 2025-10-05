@@ -19,6 +19,7 @@ export default function Home() {
   }
 
   const create = async ()=>{
+    if(userName == '') return;
     changeUsername(userName);
     try {
       const response = await fetch('/api/create', {
@@ -45,6 +46,7 @@ export default function Home() {
     }
   }
   const join = ()=>{
+    if(userName == '') return;
     changeUsername(userName);
     router.push('/join');
   }
