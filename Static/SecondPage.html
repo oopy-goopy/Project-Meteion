@@ -6,18 +6,34 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
-<body class="bodySet">
-    <div>
-        <p class="bigText">Meteion</p>
-        <div class="formRow">
-            <label class="inputLabel" for="code">Enter Code:</label>
-            <input type="text" id="codeLabel" name="codeLabel" class="inputLabel" placeholder="ex: blah blah"><br><br>
-            <input type="submit" id="submitButton" name="join" class="inputLabel" value="join">
-        </div>
-        <div class="buttonRow">
-            <a class="transferButton" href="FirstPage.html">cancel</a>
+<body>
+    <div class="container">
+        <h1 class="page-hero">Meteion</h1>
+
+        <div class="panel panel-default panel-auth">
+            <div class="panel-heading">
+                <h3 class="panel-title">Join</h3>
+            </div>
+
+            <div class="panel-body">
+                <form>
+
+                    <div class="form-group">
+                        <label for="code">Enter Code</label>
+                        <input type="text" class="form-control" id="code" placeholder="ex: blah blah">
+                    </div>
+
+                    <div class="text-center btn-group">
+                        <button type="submit" class="btn btn-primary btn-lg btn-lg-wide">Join</button>
+                        <a href="FirstPage.html" class="btn btn-default btn-lg btn-lg-wide">Cancel</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </body>

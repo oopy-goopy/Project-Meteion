@@ -67,6 +67,7 @@ body {
     width: 15%;
     height: 60px;
     border-radius: 6px;
+    font-size: 20px;
 }
 
 .codePosition {
@@ -131,4 +132,14 @@ body {
     position: relative;
     top: 70px;
     left: 390px;
+}
+
+#cancelPosition {
+    padding: 10px 24px;
+    background-color: #eee;
+    color: black;
+    text-decoration: none;
+    border: 2px solid black;
+    border-radius: 6px;
+    font-size: 15px;
 }
