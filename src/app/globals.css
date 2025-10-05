@@ -1,0 +1,196 @@
+.signInLabel {
+    font-size: 18px;
+}
+
+.bigText {
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.biggerText {
+    font-weight: bold;
+    font-size: 40px;
+}
+
+#codeLabel {
+    margin-top: 30px;
+}
+
+.formRow {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-top: 20px;
+    margin-left: 390px;
+}
+
+body {
+    text-align: center;
+}
+
+#blackRoundBox {
+    background: #fff;
+    width: 80px;
+    height: 20px;
+    border: 8px solid black;
+    margin-left: 50px;
+    border-radius: 20px;
+}
+
+.bodySet {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.buttonRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.transferButton {
+    padding: 20px 80px;
+    background-color: #eee;
+    color: black;
+    text-decoration: none;
+    border: 2px solid black;
+    border-radius: 6px;
+    font-size: 15px;
+    width: 15%;
+    height: 60px;
+
+    display: inline-block;
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+}
+
+.transferButton:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.transferButton:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25) inset;
+}
+
+#submitButton {
+    width: 15%;
+    height: 60px;
+    border-radius: 6px;
+    font-size: 20px;
+
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+}
+
+#submitButton:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+#submitButton:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25) inset;
+}
+
+.codePosition {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    font-size: 28px;
+}
+
+.messagePosition {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: lightgrey;
+    padding: 25px 40px;
+    border-radius: 10px;
+    font-size: 26px;
+    font-weight: 500;
+}
+
+#lowerMessage {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+#board {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    touch-action: none;
+    width: 900px;
+    height: 500px;
+}
+
+.bottomRow {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    right: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.nextButton {
+    padding: 20px 50px;
+    background-color: #f2f1f1;
+    color: black;
+    text-decoration: none;
+    border: 2px solid #000;
+    border-radius: 8px;
+    font-size: 28px;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 20px;
+}
+
+.meteion-img {
+    position: relative;
+    top: 70px;
+    left: 390px;
+}
+
+#cancelPosition {
+    padding: 10px 24px;
+    background-color: #eee;
+    color: black;
+    text-decoration: none;
+    border: 2px solid black;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.btn,
+.form-control {
+    transition: background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) inset;
+}
