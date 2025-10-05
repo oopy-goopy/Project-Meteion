@@ -28,21 +28,6 @@ body {
     text-align: center;
 }
 
-#blackRoundBox {
-    background: #fff;
-    width: 80px;
-    height: 20px;
-    border: 8px solid black;
-    margin-left: 50px;
-    border-radius: 20px;
-}
-
-.bodySet {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
 .buttonRow {
     display: flex;
     justify-content: center;
@@ -123,15 +108,6 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: end;
-}
-
-#board {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    touch-action: none;
-    width: 900px;
-    height: 500px;
 }
 
 .bottomRow {
