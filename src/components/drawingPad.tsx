@@ -13,6 +13,7 @@ interface DrawCanvasProps {
 export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
+    const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -47,6 +48,8 @@ export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasP
     }, []);
 
     const startDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (isProcessing) return;
+
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext('2d');
         const rect = canvas?.getBoundingClientRect();
@@ -57,7 +60,7 @@ export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasP
     };
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (!isDrawing) return;
+        if (!isDrawing || isProcessing) return;
 
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext('2d');
@@ -97,7 +100,9 @@ export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasP
 
     const submitDrawing = async (): Promise<void> => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas || isProcessing) return;
+
+        setIsProcessing(true);
 
         try {
             const dataUrl = canvas.toDataURL('image/png');
@@ -118,6 +123,8 @@ export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasP
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             onError('ERROR', errorMessage);
+        }finally{
+            setIsProcessing(false);
         }
     };
 
@@ -133,7 +140,7 @@ export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasP
                             <button onClick={clearButton} className="button">
                                 Clear
                             </button>
-                            <button onClick={submitDrawing} className="button">
+                            <button onClick={submitDrawing} className="button" disabled={isProcessing}>
                                 Next
                             </button>
                         </div>
@@ -146,6 +153,7 @@ export default function DrawCanvas({ onSuccess, onError , onSubmit}: DrawCanvasP
                     }} 
                     className="button"
                     onClick={onSubmit}
+                    disabled={isProcessing}
                 >
                     Send
                 </button>
