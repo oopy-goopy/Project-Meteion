@@ -207,7 +207,7 @@
       <div id="fakeInputText" style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#6b7280;">
         Messages will appear here
       </div>
-      <button id="copyCurrentBtn" title="Copy current" style="padding:6px 10px; border-radius:6px;">Copy</button>
+        <button id="clearCurrentBtn" title="Clear current" style="padding:6px 10px; border-radius:6px;">Clear</button>
     </div>
     <div style="font-size:12px;color:#6b7280;margin-top:6px;">Read-only — cannot type here</div>
   </div>
@@ -250,9 +250,6 @@
 
 
       setupHiDPI();
-      // push initial blank state
-      try { undoStack.push(canvas.toDataURL('image/png')); } catch (e) { /* ignore */ }
-
       // Re-setup on resize (responsive)
       window.addEventListener('resize', () => {
         // keep current drawing by copying to an image first
@@ -504,6 +501,18 @@
 
         window.logDisplay = { addLog, setLogs, copyLogs };
       })();
+
+      (function () {
+        const clearBtn = document.getElementById('clearCurrentBtn');
+        if (!clearBtn) return;
+        clearBtn.addEventListener('click', () => {
+          const fakeInputText = document.getElementById('fakeInputText');
+          if (fakeInputText) {
+            fakeInputText.textContent = '';
+          }
+        });
+      })();
+
 
 
     })();
