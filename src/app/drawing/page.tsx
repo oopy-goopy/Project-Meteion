@@ -1,11 +1,14 @@
 'use client';
+
 import "./style.css"
 
 import { useRef, useEffect, useState } from "react";
+import { recognizeDrawing } from "@/function/gemini";
 
 export default function DrawCanvas(){
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
+    const [result, setResult] = useState<string>('');
 
     useEffect(()=>{
         const canvas = canvasRef.current;
@@ -13,6 +16,9 @@ export default function DrawCanvas(){
 
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+
+        canvas.getContext('2d')!.fillStyle = 'white';
+        canvas.getContext('2d')!.fillRect(0, 0, canvas!.width, canvas!.height);
 
         const handleResize = () => {
             if (canvas) {
@@ -61,7 +67,51 @@ export default function DrawCanvas(){
         const ctx = canvas?.getContext('2d');
 
         ctx?.clearRect(0, 0, canvas!.width, canvas!.height);
+
+        ctx!.fillStyle = 'white';
+        ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
+
         ctx?.restore();
+    }
+
+    const downloadImage = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        
+        const link = document.createElement('a');
+        link.download = 'drawing.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    const submitDrawing = async (): Promise<void> => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        setResult('');
+        downloadImage();
+
+        try {
+            const dataUrl = canvas.toDataURL('image/png');
+            const base64Data = dataUrl.split(',')[1];
+
+            if (!base64Data) {
+                throw new Error('Failed to convert canvas to image');
+            }
+
+            const response = await recognizeDrawing(base64Data);
+
+            if (response.success && response.text) {
+                setResult(response.text);
+                console.log(response.text);
+                clearButton();
+            } else {
+                setResult(`Error: ${response.error || 'Could not recognize the drawing'}`);
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            setResult(`Error: ${errorMessage}`);
+        }
     }
 
     return (
@@ -73,7 +123,8 @@ export default function DrawCanvas(){
             onMouseUp={stopDraw}
             onMouseLeave={stopDraw}
             />
-            <button onClick={clearButton} className="clearButton">Clear</button>
+            <button onClick={clearButton} className="indexed">Clear</button>
+            <button onClick={submitDrawing} className="indexed">Submit</button>
         </>
     );
 }
