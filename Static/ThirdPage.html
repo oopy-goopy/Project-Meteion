@@ -4,113 +4,224 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/styles.css">
-  <title>Meteion — Drawing Demo</title>
+  <title>Meteion — Drawing + Chat</title>
 
   <style>
+    /* Page layout */
+  
+    .biggerText {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      padding: 6px 0;
+    }
+
+    .pageContainer {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      padding: 18px;
+      box-sizing: border-box;
+      min-height: 100vh;
+    }
+
+    /* Left column: main content (takes remaining width) */
+    .leftCol {
+      flex: 1 1 auto;
+      min-width: 300px;
+    }
+
+    /* Right column: chat log (fixed width) */
+    .rightCol {
+      width: 320px;            /* adjust as desired */
+      max-width: 40vw;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+      height: calc(100vh - 36px); /* keep it full-height minus page padding */
+    }
+
+    /* Chat messages list scroll area */
+    .chatMessages {
+      overflow-y: auto;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 8px;
+    }
+
+    .chatMessage {
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #f3f4f6;
+      max-width: 100%;
+      line-height: 1.3;
+    }
+
+    .chatInputRow {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chatInputRow input[type="text"] {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #dcdcdc;
+    }
+    .chatInputRow button { padding: 8px 12px; border-radius: 6px; }
+
+    /* drawing container & controls (left column) */
     .canvasContainer {
       display: flex;
       gap: 16px;
       align-items: flex-start;
-      justify-content: center;
-      padding: 18px;
-      box-sizing: border-box;
-      background: transparent;
+      margin-top: 12px;
     }
-
     .canvasControls {
-      min-width: 200px;
+      min-width: 220px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
     }
-
     .canvasControls label { display:flex; align-items:center; gap:8px; font-size:14px; }
     .canvasControls input[type="range"] { width:120px; }
 
     .canvasWrap {
-      border: 1px solid #ddd;
+      border: 1px solid #e5e7eb;
       border-radius: 8px;
       padding: 8px;
       background: #fff;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    /* Canvas responsive while preserving internal backing store (HiDPI) */
-    #draw {
-      display:block;
-      width: 720px;
-      height: 480px;
-      touch-action: none; /* draw with touch/pointer */
+    /* responsive canvas: fill container width and keep aspect ratio (3:2) */
+    canvas#draw {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 2;   /* 720x480 = 3:2 */
+      touch-action: none;
       border-radius: 4px;
     }
 
-    .codePosition { text-align:center; margin-top:8px; }
+    /* bottomRow moved into left column footer area */
+    .bottomRow { margin-top: 12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+
+    /* small screens: stack columns vertically */
+    @media (max-width: 900px) {
+      .pageContainer { flex-direction: column; padding: 12px; }
+      .rightCol { width: 100%; height: auto; max-height: none; }
+    }
   </style>
 </head>
 
 <body class="bodySet">
-  <div>
-    <p class="biggerText">Meteion</p>
-  </div>
+  <header style="text-align:center; margin: 8px 0 0 0;">
+    <h1 class="biggerText" style="margin:0;">Meteion</h1>
+  </header>
 
-  <div class="codePosition">
-    <p>Code: </p>
-  </div>
+  <div class="pageContainer">
+    <!-- LEFT COLUMN -->
+    <div class="leftCol">
 
-  <div class="canvasContainer" aria-label="Drawing area">
-    <div class="canvasControls" aria-hidden="false">
-      <div style="font-weight:600">Draw</div>
-      <label>
-        Color
-        <input id="color" type="color" value="#000000" />
-      </label>
-
-      <label>
-        Size
-        <input id="size" type="range" min="1" max="64" value="6" />
-      </label>
-
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button id="downloadBtn">Download PNG</button>
-        <button id="downloadWhiteBtn">Download (white bg)</button>
-        <button id="undoBtn">Undo</button>
-        <button id="clearBtn">Clear</button>
+      <div class="codePosition">
+        <p>Code:</p>
       </div>
 
-      <small style="color:#666">Tip: use mouse, touch or stylus. Undo stores a few recent states.</small>
-    </div>
+      <!-- DRAWING AREA -->
+      <div class="canvasContainer" aria-label="Drawing area">
+        <div class="canvasControls">
+          <div style="font-weight:600">Draw</div>
+          <label>
+            Color
+            <input id="color" type="color" value="#000000" />
+          </label>
 
-    <div class="canvasWrap" role="region" aria-label="Canvas wrapper">
-      <canvas id="draw" width="720" height="480"></canvas>
-    </div>
-  </div>
+          <label>
+            Size
+            <input id="size" type="range" min="1" max="64" value="6" />
+          </label>
 
-  <div class="bottomRow">
-    <div>
-      <a class="nextButton" href="FourthPage.html">Next</a>
-    </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button id="downloadBtn">Download PNG</button>
+            <button id="downloadWhiteBtn">Download (white bg)</button>
+            <button id="undoBtn">Undo</button>
+            <button id="clearBtn">Clear</button>
+          </div>
 
-    <div class="messagePosition">
-      <p>Message: </p>
-    </div>
-  </div>
+          <small style="color:#666">Tip: use mouse, touch or stylus. Undo stores a few recent states.</small>
+        </div>
 
-    <aside class="rightCol" aria-label="Chat log">
-      <div style="font-weight:600">Chat</div>
-
-      <div class="chatMessages" id="chatMessages">
-        <div class="chatMessage">Hello — this is a sample message.</div>
-        <div class="chatMessage">You can show logs, notes, or judge feedback here.</div>
+        <div class="canvasWrap" role="region" aria-label="Canvas wrapper">
+          <!-- responsive canvas (aspect-ratio keeps it from collapsing) -->
+          <canvas id="draw" width="720" height="480"></canvas>
+        </div>
       </div>
+      <!-- END DRAWING AREA -->
 
-      <div class="chatInputRow">
-        <input id="chatInput" type="text" placeholder="Type a message..." />
-        <button id="sendBtn">Send</button>
+      <div class="bottomRow">
+        <div>
+          <a class="nextButton" href="FourthPage.html">Next</a>
+        </div>
       </div>
-    </aside>
+    </div>
+
+<!-- REPLACE rightCol aside with this -->
+<aside class="rightCol" aria-label="Message display">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-weight:600">Messages</div>
+    <div style="display:flex; gap:8px;">
+      <button id="copyLogsBtn" title="Copy log">Copy</button>
+    </div>
   </div>
 
-  
+  <!-- display-only message log -->
+  <div id="messageDisplay" class="chatMessages" role="log" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- "fake" input at bottom that looks like a chat input but is read-only -->
+  <div style="margin-top:8px;">
+    <label for="fakeInput" style="display:none;">Read-only message box</label>
+    <div id="fakeInput"
+         role="textbox"
+         aria-readonly="true"
+         tabindex="0"
+         title="This is a read-only message box"
+         style="
+           display:flex;
+           align-items:center;
+           gap:8px;
+           padding:10px;
+           border-radius:10px;
+           border:1px solid #d1d5db;
+           background: #ffffff;
+           box-shadow: 0 1px 2px rgba(0,0,0,0.03) inset;
+           min-height:44px;
+           font-family: inherit;
+           color: #111827;
+           outline: none;
+         ">
+      <div id="fakeInputText" style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#6b7280;">
+        <!-- current message text appears here -->
+        Read-only — messages will appear here when selected or when new logs arrive.
+      </div>
+      <button id="copyCurrentBtn" title="Copy current" style="padding:6px 10px; border-radius:6px;">Copy</button>
+    </div>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">Read-only — cannot type here</div>
+  </div>
+</aside>
+
+
+
+
+  <!-- KEEP your drawing script; it already reads computed canvas size so it's responsive -->
   <script>
     (function () {
       const canvas = document.getElementById('draw');
@@ -129,16 +240,22 @@
       // Handle high-DPI (sharp backing store)
       function setupHiDPI() {
         const dpr = Math.max(1, window.devicePixelRatio || 1);
-        // CSS width/height should come from styles; read them and set backing store
         const cssW = parseInt(getComputedStyle(canvas).width, 10) || canvas.width;
         const cssH = parseInt(getComputedStyle(canvas).height, 10) || canvas.height;
+
+        // Set backing store size
         canvas.width = Math.floor(cssW * dpr);
         canvas.height = Math.floor(cssH * dpr);
-        // scale drawing operations so coordinates are in CSS pixels
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // Reset transforms (important) then scale once for DPR.
+        // This prevents multiple scale calls stacking up when resizing.
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
       }
+
 
       setupHiDPI();
       // push initial blank state
@@ -146,18 +263,19 @@
 
       // Re-setup on resize (responsive)
       window.addEventListener('resize', () => {
-        // keep current drawing (copy to image)
+        // keep current drawing by copying to an image first
         const img = new Image();
         img.src = canvas.toDataURL();
         img.onload = () => {
           setupHiDPI();
-          // draw previous content into resized canvas (scaled automatically by drawImage)
           const dpr = Math.max(1, window.devicePixelRatio || 1);
+          // draw previous content scaled to CSS pixels (ctx is scaled by dpr)
           ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
           ctx.drawImage(img, 0, 0, canvas.width / dpr, canvas.height / dpr);
-          pushState();
+          pushState && pushState();
         };
       });
+
 
       // Helpers
       let drawing = false;
@@ -167,8 +285,24 @@
         const rect = canvas.getBoundingClientRect();
         const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
         const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY);
-        return { x: clientX - rect.left, y: clientY - rect.top };
+
+        // If something is odd (no client coords) bail safely
+        if (clientX == null || clientY == null) return { x: 0, y: 0 };
+
+        // Map pointer coordinates to CSS pixels expected by the drawing context.
+        // This corrects for DPR, rounding and fractional CSS sizes.
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        const scaleX = canvas.width / rect.width;   // backing / css width
+        const scaleY = canvas.height / rect.height; // backing / css height
+
+        return {
+          // scale to backing store then divide by dpr to get CSS-pixel coords
+          x: (clientX - rect.left) * (scaleX / dpr),
+          y: (clientY - rect.top) * (scaleY / dpr)
+        };
       }
+
+
 
       function pushState() {
         try {
@@ -177,7 +311,6 @@
         } catch (err) { /* ignore */ }
       }
 
-    // Functions
       function beginDraw(e) {
         e.preventDefault();
         drawing = true;
@@ -192,13 +325,21 @@
         if (!drawing) return;
         e.preventDefault();
         const p = getPointerPos(e);
-        // draw quadratic curve from last to mid point for smoother lines
+        if (!lastPos) {
+          // If lastPos is missing for any reason, initialize it to current pointer.
+          lastPos = p;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          return;
+        }
         const midX = (lastPos.x + p.x) / 2;
         const midY = (lastPos.y + p.y) / 2;
         ctx.quadraticCurveTo(lastPos.x, lastPos.y, midX, midY);
         ctx.stroke();
         lastPos = p;
       }
+
+
 
       function endDraw(e) {
         if (!drawing) return;
@@ -207,14 +348,11 @@
         pushState();
       }
 
-      // Attach pointer events
       canvas.addEventListener('pointerdown', beginDraw);
       window.addEventListener('pointermove', drawMove);
       window.addEventListener('pointerup', endDraw);
-      // Prevent touch scrolling inside canvas wrap
       canvas.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: false });
 
-      // Controls
       clearBtn.addEventListener('click', () => {
         const dpr = Math.max(1, window.devicePixelRatio || 1);
         ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
@@ -223,7 +361,6 @@
 
       undoBtn.addEventListener('click', () => {
         if (!undoStack.length) return;
-        // remove current state
         undoStack.pop();
         const last = undoStack[undoStack.length - 1];
         if (!last) {
@@ -240,9 +377,7 @@
         img.src = last;
       });
 
-      // Download helpers: preserve backing store resolution
       function download(whiteBackground = false) {
-        // create a temporary canvas at backing store size
         const tmp = document.createElement('canvas');
         tmp.width = canvas.width;
         tmp.height = canvas.height;
@@ -253,7 +388,6 @@
           tctx.fillRect(0, 0, tmp.width, tmp.height);
         }
 
-        // draw source into temp canvas; keeps full resolution
         tctx.drawImage(canvas, 0, 0);
 
         if (tmp.toBlob) {
@@ -267,7 +401,6 @@
             setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 150);
           }, 'image/png');
         } else {
-          // fallback
           const dataUrl = tmp.toDataURL('image/png');
           const a = document.createElement('a');
           a.href = dataUrl; a.download = 'drawing.png';
@@ -277,8 +410,114 @@
 
       downloadBtn.addEventListener('click', () => download(false));
       downloadWhiteBtn.addEventListener('click', () => download(true));
-
       pushState();
+
+            // --- Read-only message display API (safe & self-contained) ---
+      (function () {
+        const messageDisplay = document.getElementById('messageDisplay');
+        const copyLogsBtn = document.getElementById('copyLogsBtn');
+
+        // If the main UI isn't present, export a safe no-op API and exit.
+        if (!messageDisplay) {
+          window.logDisplay = {
+            addLog: () => {},
+            setLogs: () => {},
+            copyLogs: async () => {}
+          };
+          return;
+        }
+
+        function appendEntry(role = 'INFO', text = '') {
+          const el = document.createElement('div');
+          el.className = 'logEntry';
+          el.style.display = 'flex';
+          el.style.gap = '8px';
+          el.style.alignItems = 'flex-start';
+          el.style.padding = '8px';
+          el.style.borderRadius = '6px';
+          el.style.background = 'rgba(15,23,42,0.03)';
+          el.style.cursor = 'pointer';
+
+          const roleEl = document.createElement('div');
+          roleEl.className = 'logRole';
+          roleEl.textContent = role;
+          roleEl.style.fontWeight = '700';
+          roleEl.style.fontSize = '11px';
+          roleEl.style.padding = '2px 6px';
+          roleEl.style.borderRadius = '4px';
+          roleEl.style.background = '#e6eef8';
+          roleEl.style.color = '#0f172a';
+          roleEl.style.flex = '0 0 auto';
+
+          const textEl = document.createElement('div');
+          textEl.className = 'logText';
+          textEl.style.whiteSpace = 'pre-wrap';
+          textEl.style.lineHeight = '1.35';
+          textEl.style.flex = '1 1 auto';
+          textEl.textContent = text;
+
+          const timeEl = document.createElement('div');
+          timeEl.className = 'logTime';
+          timeEl.style.marginLeft = '8px';
+          timeEl.style.fontSize = '11px';
+          timeEl.style.color = '#6b7280';
+          timeEl.style.flex = '0 0 auto';
+          timeEl.textContent = new Date().toLocaleTimeString();
+
+          el.appendChild(roleEl);
+          el.appendChild(textEl);
+          el.appendChild(timeEl);
+
+          // clicking a log puts its text into the fake input (if you have one)
+          el.addEventListener('click', () => {
+            const fakeInputText = document.getElementById('fakeInputText');
+            if (fakeInputText) fakeInputText.textContent = text;
+          });
+
+          messageDisplay.appendChild(el);
+          messageDisplay.scrollTop = messageDisplay.scrollHeight;
+          return el;
+        }
+
+        function addLog(role = 'INFO', text = '') {
+          appendEntry(role, text);
+        }
+
+        function setLogs(entries = []) {
+          messageDisplay.innerHTML = '';
+          entries.forEach(e => appendEntry(e.role ?? 'INFO', e.text ?? ''));
+        }
+
+        async function copyLogs() {
+          const lines = Array.from(messageDisplay.querySelectorAll('.logEntry')).map(el => {
+            const role = el.querySelector('.logRole')?.textContent ?? '';
+            const text = el.querySelector('.logText')?.textContent ?? '';
+            const time = el.querySelector('.logTime')?.textContent ?? '';
+            return `[${time}] ${role}: ${text}`;
+          });
+          const txt = lines.join('\n');
+          try {
+            await navigator.clipboard.writeText(txt);
+            if (copyLogsBtn) { copyLogsBtn.textContent = 'Copied'; setTimeout(() => { copyLogsBtn.textContent = 'Copy'; }, 1200); }
+          } catch (e) {
+            const ta = document.createElement('textarea');
+            ta.value = txt;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            ta.remove();
+            if (copyLogsBtn) { copyLogsBtn.textContent = 'Copied'; setTimeout(() => { copyLogsBtn.textContent = 'Copy'; }, 1200); }
+          }
+        }
+
+        // Wire buttons only if they exist (defensive)
+        if (copyLogsBtn) copyLogsBtn.addEventListener('click', copyLogs);
+
+        // Expose a small API for other scripts (drawing code) to call
+        window.logDisplay = { addLog, setLogs, copyLogs };
+      })();
+
+
     })();
   </script>
 </body>
