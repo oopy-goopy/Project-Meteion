@@ -159,10 +159,16 @@ body {
     gap: 20px;
 }
 
-.meteion-img {
+.stormP1-img {
     position: relative;
     top: 70px;
     left: 390px;
+}
+
+.orang-img {
+    position: relative;
+    top: 381px;
+    left: 413px;
 }
 
 #cancelPosition {
