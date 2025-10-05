@@ -1,3 +1,13 @@
+/* ======DeskTop======*/
+
+html {
+    font-size: 16px;
+}
+
+body {
+    text-align: center;
+}
+
 .signInLabel {
     font-size: 18px;
 }
@@ -205,4 +215,147 @@ body {
     display: flex;
     justify-content: center;
     gap: 20px;
+}
+
+/* ======Tablet======*/
+
+@media (max-width: 992px) {
+    .bigText {
+        font-size: 28px;
+    }
+
+    .biggerText {
+        font-size: 34px;
+    }
+
+    .formRow {
+        margin-left: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    #nameControl {
+        width: 80%;
+        max-width: 420px;
+    }
+
+    .buttonRow,
+    .button-row {
+        gap: 24px;
+    }
+
+    #board {
+        width: min(92vw, 900px);
+        height: min(50vh, 500px);
+    }
+
+    .bottomRow {
+        left: 2vw;
+        right: 2vw;
+        bottom: 2vw;
+    }
+
+    .stormP1-img,
+    .orang-img,
+    .edwdg-img,
+    .gym-img,
+    .dawg-img {
+        position: static;
+        width: clamp(220px, 30vw, 304px);
+        height: auto;
+        margin: 8px;
+    }
+
+    .jumbotron {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .jumbotron img {
+        display: inline-block;
+    }
+}
+
+
+/* =====Mobile=====*/
+
+@media (max-width: 768px) {
+
+    .bigText {
+        font-size: 24px;
+    }
+
+    .biggerText {
+        font-size: 28px;
+    }
+
+    #nameControl {
+        width: 92%;
+        max-width: 28rem;
+        font-size: 16px;
+    }
+
+    .buttonRow,
+    .button-row {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .transferButton,
+    #submitButton,
+    .submitButton {
+        width: 92%;
+        max-width: 22rem;
+        padding: 16px 24px;
+        height: auto;
+        font-size: 18px;
+    }
+
+    .codePosition {
+        top: 3vw;
+        left: 3vw;
+        font-size: 20px;
+    }
+
+    .messagePosition {
+        padding: 14px 20px;
+        font-size: 18px;
+    }
+
+    #board {
+        width: 94vw;
+        height: 44vh;
+    }
+}
+
+
+/* ===== Small Mobile ====== */
+@media (max-width: 480px) {
+    html {
+        font-size: 15px;
+    }
+
+    .transferButton,
+    #submitButton,
+    .submitButton {
+        width: 96%;
+        max-width: 20rem;
+        font-size: 16px;
+        padding: 14px 18px;
+    }
+
+    #nameControl {
+        width: 96%;
+        max-width: 22rem;
+    }
+
+    .stormP1-img,
+    .orang-img,
+    .edwdg-img,
+    .gym-img,
+    .dawg-img {
+        width: clamp(160px, 42vw, 240px);
+    }
 }
