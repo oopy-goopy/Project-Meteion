@@ -1,28 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/styles.css">
+  <title>Meteion — Drawing Demo</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .canvasContainer {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 18px;
+      box-sizing: border-box;
+      background: transparent;
+    }
+
+    .canvasControls {
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    }
+
+    .canvasControls label { display:flex; align-items:center; gap:8px; font-size:14px; }
+    .canvasControls input[type="range"] { width:120px; }
+
+    .canvasWrap {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      background: #fff;
+    }
+
+    /* Canvas responsive while preserving internal backing store (HiDPI) */
+    #draw {
+      display:block;
+      width: 720px;
+      height: 480px;
+      touch-action: none; /* draw with touch/pointer */
+      border-radius: 4px;
+    }
+
+    .codePosition { text-align:center; margin-top:8px; }
+  </style>
 </head>
 
 <body class="bodySet">
+  <div>
     <p class="biggerText">Meteion</p>
+  </div>
 
-    <div class="codePosition">
-        <p>Code: </p>
+  <div class="codePosition">
+    <p>Code: </p>
+  </div>
+
+  <div class="canvasContainer" aria-label="Drawing area">
+    <div class="canvasControls" aria-hidden="false">
+      <div style="font-weight:600">Draw</div>
+      <label>
+        Color
+        <input id="color" type="color" value="#000000" />
+      </label>
+
+      <label>
+        Size
+        <input id="size" type="range" min="1" max="64" value="6" />
+      </label>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="downloadBtn">Download PNG</button>
+        <button id="downloadWhiteBtn">Download (white bg)</button>
+        <button id="undoBtn">Undo</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+
+      <small style="color:#666">Tip: use mouse, touch or stylus. Undo stores a few recent states.</small>
     </div>
 
-    <div class="bottomRow">
-        <div>
-            <a class="nextButton" href="FourthPage.html">Next</a>
-        </div>
-
-        <div class="messagePosition">
-            <p>Message: </p>
-        </div>
+    <div class="canvasWrap" role="region" aria-label="Canvas wrapper">
+      <canvas id="draw" width="720" height="480"></canvas>
     </div>
+  </div>
+
+  <div class="bottomRow">
+    <div>
+      <a class="nextButton" href="FourthPage.html">Next</a>
+    </div>
+
+    <div class="messagePosition">
+      <p>Message: </p>
+    </div>
+  </div>
+
+    <aside class="rightCol" aria-label="Chat log">
+      <div style="font-weight:600">Chat</div>
+
+      <div class="chatMessages" id="chatMessages">
+        <div class="chatMessage">Hello — this is a sample message.</div>
+        <div class="chatMessage">You can show logs, notes, or judge feedback here.</div>
+      </div>
+
+      <div class="chatInputRow">
+        <input id="chatInput" type="text" placeholder="Type a message..." />
+        <button id="sendBtn">Send</button>
+      </div>
+    </aside>
+  </div>
+
+  
+  <script>
+    (function () {
+      const canvas = document.getElementById('draw');
+      const ctx = canvas.getContext('2d', { alpha: true });
+      const colorEl = document.getElementById('color');
+      const sizeEl = document.getElementById('size');
+      const clearBtn = document.getElementById('clearBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const downloadWhiteBtn = document.getElementById('downloadWhiteBtn');
+      const undoBtn = document.getElementById('undoBtn');
+
+      // Undo stack (stores dataURLs) — capped to avoid memory bloat
+      const undoStack = [];
+      const MAX_UNDO = 12;
+
+      // Handle high-DPI (sharp backing store)
+      function setupHiDPI() {
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        // CSS width/height should come from styles; read them and set backing store
+        const cssW = parseInt(getComputedStyle(canvas).width, 10) || canvas.width;
+        const cssH = parseInt(getComputedStyle(canvas).height, 10) || canvas.height;
+        canvas.width = Math.floor(cssW * dpr);
+        canvas.height = Math.floor(cssH * dpr);
+        // scale drawing operations so coordinates are in CSS pixels
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+
+      setupHiDPI();
+      // push initial blank state
+      try { undoStack.push(canvas.toDataURL('image/png')); } catch (e) { /* ignore */ }
+
+      // Re-setup on resize (responsive)
+      window.addEventListener('resize', () => {
+        // keep current drawing (copy to image)
+        const img = new Image();
+        img.src = canvas.toDataURL();
+        img.onload = () => {
+          setupHiDPI();
+          // draw previous content into resized canvas (scaled automatically by drawImage)
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+          ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+          ctx.drawImage(img, 0, 0, canvas.width / dpr, canvas.height / dpr);
+          pushState();
+        };
+      });
+
+      // Helpers
+      let drawing = false;
+      let lastPos = null;
+
+      function getPointerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+        const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY);
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      }
+
+      function pushState() {
+        try {
+          undoStack.push(canvas.toDataURL('image/png'));
+          if (undoStack.length > MAX_UNDO) undoStack.shift();
+        } catch (err) { /* ignore */ }
+      }
+
+    // Functions
+      function beginDraw(e) {
+        e.preventDefault();
+        drawing = true;
+        lastPos = getPointerPos(e);
+        ctx.beginPath();
+        ctx.moveTo(lastPos.x, lastPos.y);
+        ctx.strokeStyle = colorEl.value;
+        ctx.lineWidth = parseFloat(sizeEl.value);
+      }
+
+      function drawMove(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const p = getPointerPos(e);
+        // draw quadratic curve from last to mid point for smoother lines
+        const midX = (lastPos.x + p.x) / 2;
+        const midY = (lastPos.y + p.y) / 2;
+        ctx.quadraticCurveTo(lastPos.x, lastPos.y, midX, midY);
+        ctx.stroke();
+        lastPos = p;
+      }
+
+      function endDraw(e) {
+        if (!drawing) return;
+        drawing = false;
+        ctx.closePath();
+        pushState();
+      }
+
+      // Attach pointer events
+      canvas.addEventListener('pointerdown', beginDraw);
+      window.addEventListener('pointermove', drawMove);
+      window.addEventListener('pointerup', endDraw);
+      // Prevent touch scrolling inside canvas wrap
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: false });
+
+      // Controls
+      clearBtn.addEventListener('click', () => {
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+        pushState();
+      });
+
+      undoBtn.addEventListener('click', () => {
+        if (!undoStack.length) return;
+        // remove current state
+        undoStack.pop();
+        const last = undoStack[undoStack.length - 1];
+        if (!last) {
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+          ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+          ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+          ctx.drawImage(img, 0, 0, canvas.width / dpr, canvas.height / dpr);
+        };
+        img.src = last;
+      });
+
+      // Download helpers: preserve backing store resolution
+      function download(whiteBackground = false) {
+        // create a temporary canvas at backing store size
+        const tmp = document.createElement('canvas');
+        tmp.width = canvas.width;
+        tmp.height = canvas.height;
+        const tctx = tmp.getContext('2d');
+
+        if (whiteBackground) {
+          tctx.fillStyle = '#fff';
+          tctx.fillRect(0, 0, tmp.width, tmp.height);
+        }
+
+        // draw source into temp canvas; keeps full resolution
+        tctx.drawImage(canvas, 0, 0);
+
+        if (tmp.toBlob) {
+          tmp.toBlob((blob) => {
+            if (!blob) return;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'drawing.png';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 150);
+          }, 'image/png');
+        } else {
+          // fallback
+          const dataUrl = tmp.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = dataUrl; a.download = 'drawing.png';
+          a.click();
+        }
+      }
+
+      downloadBtn.addEventListener('click', () => download(false));
+      downloadWhiteBtn.addEventListener('click', () => download(true));
+
+      pushState();
+    })();
+  </script>
 </body>
 </html>
