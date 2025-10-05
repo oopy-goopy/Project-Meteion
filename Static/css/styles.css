@@ -171,6 +171,12 @@ body {
     left: 413px;
 }
 
+.gym-img {
+    position: relative;
+    top: 248px;
+    left: 370px;
+}
+
 #cancelPosition {
     padding: 10px 24px;
     background-color: #eee;
